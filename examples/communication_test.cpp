@@ -67,13 +67,13 @@ int main(int argc, char** argv) {
                       << " Current success rate: " << robot_state.control_command_success_rate
                       << std::endl;
           }
-          std::this_thread::sleep_for(std::chrono::microseconds(100));
+          std::this_thread::sleep_for(std::chrono::microseconds(100));  // 休眠 100 ms
 
           avg_success_rate += robot_state.control_command_success_rate;
-          if (robot_state.control_command_success_rate > max_success_rate) {
+          if (robot_state.control_command_success_rate > max_success_rate) {  // 更新 max_success_rate
             max_success_rate = robot_state.control_command_success_rate;
           }
-          if (robot_state.control_command_success_rate < min_success_rate) {
+          if (robot_state.control_command_success_rate < min_success_rate) {  // 更新 min_success_rate
             min_success_rate = robot_state.control_command_success_rate;
           }
 
@@ -82,6 +82,7 @@ int main(int argc, char** argv) {
             return franka::MotionFinished(zero_torques);
           }
 
+          // 始终输入 零力矩
           // Sending zero torques - if EE is configured correctly, robot should not move
           return zero_torques;
         },
@@ -96,7 +97,7 @@ int main(int argc, char** argv) {
   std::cout << std::endl
             << std::endl
             << "#######################################################" << std::endl;
-  uint64_t lost_robot_states = time - counter;
+  uint64_t lost_robot_states = time - counter;  // time 单位 ms, FCI 1000Hz
   if (lost_robot_states > 0) {
     std::cout << "The control loop did not get executed " << lost_robot_states << " times in the"
               << std::endl

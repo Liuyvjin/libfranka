@@ -9,6 +9,7 @@
 /**
  * @example vacuum_object.cpp
  * An example showing how to control FRANKA's vacuum gripper.
+ * 展示如何使用 Franka 气动爪
  */
 
 int main(int argc, char** argv) {

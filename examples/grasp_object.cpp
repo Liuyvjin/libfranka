@@ -10,7 +10,7 @@
 
 /**
  * @example grasp_object.cpp
- * An example showing how to control FRANKA's gripper.
+ * 展示如何控制 FRANKA's gripper.
  */
 
 int main(int argc, char** argv) {

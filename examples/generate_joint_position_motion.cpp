@@ -11,6 +11,7 @@
 /**
  * @example generate_joint_position_motion.cpp
  * An example showing how to generate a joint position motion.
+ * 展示关节空间运动生成器, 可以直接调用 examples_common.h 中的 MotionGenerator
  *
  * @warning Before executing this example, make sure there is enough space in front of the robot.
  */
@@ -24,7 +25,7 @@ int main(int argc, char** argv) {
     franka::Robot robot(argv[1]);
     setDefaultBehavior(robot);
 
-    // First move the robot to a suitable joint configuration
+    // 将机器人复位
     std::array<double, 7> q_goal = {{0, -M_PI_4, 0, -3 * M_PI_4, 0, M_PI_2, M_PI_4}};
     MotionGenerator motion_generator(0.5, q_goal);
     std::cout << "WARNING: This example will move the robot! "
@@ -49,17 +50,17 @@ int main(int argc, char** argv) {
       time += period.toSec();
 
       if (time == 0.0) {
-        initial_position = robot_state.q_d;
+        initial_position = robot_state.q_d;  // 使用上一次的 q_d 作为初始关节位置
       }
 
-      double delta_angle = M_PI / 8.0 * (1 - std::cos(M_PI / 2.5 * time));
+      double delta_angle = M_PI / 8.0 * (1 - std::cos(M_PI / 2.5 * time));  // 0 -> pi/4 -> 0
 
       franka::JointPositions output = {{initial_position[0], initial_position[1],
                                         initial_position[2], initial_position[3] + delta_angle,
                                         initial_position[4] + delta_angle, initial_position[5],
                                         initial_position[6] + delta_angle}};
 
-      if (time >= 5.0) {
+      if (time >= 5.0) {  // 两个周期后停止
         std::cout << std::endl << "Finished motion, shutting down example" << std::endl;
         return franka::MotionFinished(output);
       }

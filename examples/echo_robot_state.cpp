@@ -8,6 +8,7 @@
 /**
  * @example echo_robot_state.cpp
  * An example showing how to continuously read the robot state.
+ * 展示连续读取机器人状态
  */
 
 int main(int argc, char** argv) {

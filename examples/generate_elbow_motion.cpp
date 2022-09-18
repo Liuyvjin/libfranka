@@ -11,6 +11,7 @@
 /**
  * @example generate_elbow_motion.cpp
  * An example showing how to move the robot's elbow.
+ * 在末端执行器位姿不变的情况下, 移动 elbow
  *
  * @warning Before executing this example, make sure that the elbow has enough space to move.
  */
@@ -24,7 +25,7 @@ int main(int argc, char** argv) {
     franka::Robot robot(argv[1]);
     setDefaultBehavior(robot);
 
-    // First move the robot to a suitable joint configuration
+    // 首先将机器人复位
     std::array<double, 7> q_goal = {{0, -M_PI_4, 0, -3 * M_PI_4, 0, M_PI_2, M_PI_4}};
     MotionGenerator motion_generator(0.5, q_goal);
     std::cout << "WARNING: This example will move the robot! "
@@ -42,8 +43,12 @@ int main(int argc, char** argv) {
         {{20.0, 20.0, 20.0, 25.0, 25.0, 25.0}}, {{20.0, 20.0, 20.0, 25.0, 25.0, 25.0}},
         {{20.0, 20.0, 20.0, 25.0, 25.0, 25.0}}, {{20.0, 20.0, 20.0, 25.0, 25.0, 25.0}});
 
-    std::array<double, 16> initial_pose;
+    // elbow array 的值为:
+    // [0] Position of the 3rd joint in [rad].
+    // [1] Sign of the 4th joint. Can be +1 or -1.
     std::array<double, 2> initial_elbow;
+    std::array<double, 16> initial_pose;
+
     double time = 0.0;
     robot.control(
         [&time, &initial_pose, &initial_elbow](const franka::RobotState& robot_state,
@@ -55,7 +60,7 @@ int main(int argc, char** argv) {
             initial_elbow = robot_state.elbow_c;
           }
 
-          double angle = M_PI / 10.0 * (1.0 - std::cos(M_PI / 5.0 * time));
+          double angle = M_PI / 10.0 * (1.0 - std::cos(M_PI / 5.0 * time));  // 0 -> pi/5 -> 0
 
           auto elbow = initial_elbow;
           elbow[0] += angle;

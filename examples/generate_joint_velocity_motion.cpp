@@ -11,6 +11,7 @@
 /**
  * @example generate_joint_velocity_motion.cpp
  * An example showing how to generate a joint velocity motion.
+ * 展示关节速度运动生成器
  *
  * @warning Before executing this example, make sure there is enough space in front of the robot.
  */
@@ -24,7 +25,7 @@ int main(int argc, char** argv) {
     franka::Robot robot(argv[1]);
     setDefaultBehavior(robot);
 
-    // First move the robot to a suitable joint configuration
+    // 将机器人复位
     std::array<double, 7> q_goal = {{0, -M_PI_4, 0, -3 * M_PI_4, 0, M_PI_2, M_PI_4}};
     MotionGenerator motion_generator(0.5, q_goal);
     std::cout << "WARNING: This example will move the robot! "
@@ -42,19 +43,20 @@ int main(int argc, char** argv) {
         {{20.0, 20.0, 20.0, 25.0, 25.0, 25.0}}, {{20.0, 20.0, 20.0, 25.0, 25.0, 25.0}},
         {{20.0, 20.0, 20.0, 25.0, 25.0, 25.0}}, {{20.0, 20.0, 20.0, 25.0, 25.0, 25.0}});
 
-    double time_max = 1.0;
-    double omega_max = 1.0;
+    double time_max = 1.0;  // 三角函数周期
+    double omega_max = 1.0;  // 最大角速度
     double time = 0.0;
     robot.control(
         [=, &time](const franka::RobotState&, franka::Duration period) -> franka::JointVelocities {
           time += period.toSec();
-
+          // 周期时长为 time_max, 偶数周期为 1, 奇数周期为 -1
           double cycle = std::floor(std::pow(-1.0, (time - std::fmod(time, time_max)) / time_max));
+          // 角速度, 偶数周期 0 -> omega_max -> 0, 奇数周期 0 -> -omega_max -> 0
           double omega = cycle * omega_max / 2.0 * (1.0 - std::cos(2.0 * M_PI / time_max * time));
 
           franka::JointVelocities velocities = {{0.0, 0.0, 0.0, omega, omega, omega, omega}};
 
-          if (time >= 2 * time_max) {
+          if (time >= 2 * time_max) {  // 两个周期后结束
             std::cout << std::endl << "Finished motion, shutting down example" << std::endl;
             return franka::MotionFinished(velocities);
           }

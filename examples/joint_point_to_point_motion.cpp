@@ -11,6 +11,7 @@
 /**
  * @example joint_point_to_point_motion.cpp
  * An example that moves the robot to a target position by commanding joint positions.
+ * 命令行输入 ip, q0~q7, speed_factor , 控制机器人运动到该位置
  *
  * @warning Before executing this example, make sure there is enough space in front of the robot.
  */
